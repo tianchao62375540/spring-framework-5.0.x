@@ -220,6 +220,7 @@ public class AnnotatedBeanDefinitionReader {
 		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(annotatedClass);
 		/**
 		 * 判断这个类是否uxuyao跳过解析
+		 * 通过代码可以知道spring判断是否跳过解析，主要判断类有没有加注解
 		 */
 		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
 			return;
