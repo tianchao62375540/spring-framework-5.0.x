@@ -212,13 +212,23 @@ public class AnnotatedBeanDefinitionReader {
 	 */
 	<T> void doRegisterBean(Class<T> annotatedClass, @Nullable Supplier<T> instanceSupplier, @Nullable String name,
 			@Nullable Class<? extends Annotation>[] qualifiers, BeanDefinitionCustomizer... definitionCustomizers) {
-
+		/**
+		 * 根据指定的bean创建一个AnnotationGenericBeanDefinition
+		 * 这个AnnotationGenericBeanDefinition可以理解为一个数据结构,
+		 * AnnotationGenericBeanDefinition包含了类的其他信息，比如一些元信息scope,lazy等
+		 */
 		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(annotatedClass);
+		/**
+		 * 判断这个类是否uxuyao跳过解析
+		 */
 		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
 			return;
 		}
-
+		//不知道
 		abd.setInstanceSupplier(instanceSupplier);
+		/**
+		 * 得到类的作用域
+		 */
 		ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd);
 		abd.setScope(scopeMetadata.getScopeName());
 		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
