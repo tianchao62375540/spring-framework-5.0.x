@@ -220,9 +220,10 @@ public class AnnotatedBeanDefinitionReader {
 		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(annotatedClass);
 		/**
 		 * 判断这个类是否uxuyao跳过解析
-		 * 通过代码可以知道spring判断是否跳过解析，主要判断类有没有加注解
+		 * 通过代码可以知道spring判断是否跳过解析，主要判断类有没有加Conditional注解 没有加 就不跳过
 		 */
 		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
+			//不加springboot的注解Conditional 这里一定不会执行
 			return;
 		}
 		//不知道
@@ -233,8 +234,21 @@ public class AnnotatedBeanDefinitionReader {
 		ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd);
 		abd.setScope(scopeMetadata.getScopeName());
 		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
-
+		/**
+		 * 处理类中的通用注解
+		 * 分析源码可以知道他主要处理。。。、
+		 * Lazy DependOn Primary Role等等注解
+		 * 处理完成后processCommonDefinitionAnnotations中依然是把它添加到数据结构abd中去
+		 */
 		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
+		/**
+		 * 如果在向容器注册注解Bean定义时候，使用了额外的限定符注解则解析
+		 * 关于Qualifier和Primary前面的课程讲过，主要涉及spring自动装配
+		 * 这里需要注意的
+		 * byName 和 Qualifilers这个变量是Annotation类型的数组，里面存的不仅仅是Qualifilers注解
+		 * 理论上里面存的是一切注解，所以看到下面的代码spring去循环了这个数组
+		 * 然后依次判断了注解当中是包含了Primary，是否包含了Lazyd
+		 */
 		if (qualifiers != null) {
 			for (Class<? extends Annotation> qualifier : qualifiers) {
 				if (Primary.class == qualifier) {
@@ -251,9 +265,25 @@ public class AnnotatedBeanDefinitionReader {
 		for (BeanDefinitionCustomizer customizer : definitionCustomizers) {
 			customizer.customize(abd);
 		}
-
+		/**
+		 * 这个BeanDefinitionHolder也是一个数据结构
+		 */
 		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
+		/**
+		 * ScopedProxyMode这个知识比较复杂，需要结合web去理解
+		 * 可以暂时放一下，等说到springmvc时候再说
+		 * 或者看情况现在说也是一样的
+		 */
 		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
+		/**
+		 * 把上述的这个数据结构注册给registry
+		 * registry就是AnnotionConfigApplicationContext
+		 * AnnotionConfigApplicationContext在初始化的时候通过调用父类的构造方法
+		 * 实例化了一个DefaultListableBeanFactory
+		 * *registerBeanDefinition里面就是把definitionHolder这个数据结构包含的信息注册到
+		 * DefaultListableBeanFactory这个工厂
+		 *
+		 */
 		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);
 	}
 
