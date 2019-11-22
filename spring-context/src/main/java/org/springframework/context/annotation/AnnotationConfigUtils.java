@@ -68,7 +68,7 @@ public class AnnotationConfigUtils {
 	public static final String CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME =
 			"org.springframework.context.annotation.internalConfigurationAnnotationProcessor";
 
-	/**
+	/**ConfigurationClassPostProcessor
 	 * The bean name of the internally managed BeanNameGenerator for use when processing
 	 * {@link Configuration} classes. Set by {@link AnnotationConfigApplicationContext}
 	 * and {@code AnnotationConfigWebApplicationContext} during bootstrap in order to make

@@ -41,6 +41,8 @@ public class TestAll {
 		//context.register(IndexDao.class);
 		//context.refresh();
 		IndexDao bean = context.getBean(IndexDao.class);
+		IndexDao bean1 = context.getBean(IndexDao.class);
+		System.out.println(bean+"   "+bean1);
 		bean.query();
 	}
 
