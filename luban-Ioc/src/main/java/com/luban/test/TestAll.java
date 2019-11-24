@@ -2,6 +2,7 @@ package com.luban.test;
 
 import com.luban.app.AppConfig;
 import com.luban.dao.IndexDao;
+import com.luban.ext.MyBeanFacoryPostProcessor;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -40,6 +41,8 @@ public class TestAll {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 		//context.register(IndexDao.class);
 		//context.refresh();
+		//称之为自定义的BeanFactoryPostProcessor 没有被spring容器管理
+		//context.addBeanFactoryPostProcessor(MyBeanFacoryPostProcessor.class);
 		IndexDao bean = context.getBean(IndexDao.class);
 		IndexDao bean1 = context.getBean(IndexDao.class);
 		System.out.println(bean+"   "+bean1);

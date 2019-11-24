@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * @Date: 2019/11/18 23:41
  * @Description:
  */
-//@Component
+@Component
 public class TwoBeanProcessor implements BeanPostProcessor, PriorityOrdered {
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {

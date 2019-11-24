@@ -654,7 +654,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.setBeanClassLoader(getClassLoader());
 		//bean的表达式解析，后面说
 		beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
-		//编辑属性不重要
+		//对象和string的转换 <property ref ='dao'> 把dao转换为对象
 		beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
 
 		// Configure the bean factory with context callbacks.
@@ -687,8 +687,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			// Set a temporary ClassLoader for type matching.
 			beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
 		}
-
+		//bean是放在工厂父类DefaultSingletonBeanRegistry类的属性中
 		// Register default environment beans.
+		//意思是如果自定义的bean中没有名为'systemProperties'和'systemEnvironment'的bean
+		//则注册两个bean, key为'systemProperties'和'systemEnvironment' Value为map
+		//这两个bean就是系统配置和系统环境信息
 		if (!beanFactory.containsLocalBean(ENVIRONMENT_BEAN_NAME)) {
 			beanFactory.registerSingleton(ENVIRONMENT_BEAN_NAME, getEnvironment());
 		}
@@ -716,6 +719,14 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * <p>Must be called before singleton instantiation.
 	 */
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+		/**
+		 *这个地方需要注意getBeanFactoryPostProcessors()是获取自定义的
+		 * 自定义并不仅仅是程序员自己写的
+		 * 自己写的可以加component也可以不加
+		 * 如果加了getBeanFactoryPostProcessors()得不到
+		 * 为什么得不到：这个list是AnnotationConfigurationApplicationContext定义的 到目前为止 没有这个对象的list放值
+		 *
+		 */
 		PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found in the meantime
