@@ -72,8 +72,14 @@ class ComponentScanAnnotationParser {
 		this.registry = registry;
 	}
 
-
-	public Set<BeanDefinitionHolder> parse(AnnotationAttributes componentScan, final String declaringClass) {
+	/**
+	 * 处理componentScan注解
+	 * @param componentScan
+	 * @param declaringClass
+	 * @return
+	 */
+	public Set<BeanDefinitionHolder>  parse(AnnotationAttributes componentScan, final String declaringClass) {
+		//spring内部用的包扫描器
 		ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(this.registry,
 				componentScan.getBoolean("useDefaultFilters"), this.environment, this.resourceLoader);
 
@@ -81,7 +87,7 @@ class ComponentScanAnnotationParser {
 		boolean useInheritedGenerator = (BeanNameGenerator.class == generatorClass);
 		scanner.setBeanNameGenerator(useInheritedGenerator ? this.beanNameGenerator :
 				BeanUtils.instantiateClass(generatorClass));
-
+		//web...处理 狠重要
 		ScopedProxyMode scopedProxyMode = componentScan.getEnum("scopedProxy");
 		if (scopedProxyMode != ScopedProxyMode.DEFAULT) {
 			scanner.setScopedProxyMode(scopedProxyMode);
@@ -103,7 +109,9 @@ class ComponentScanAnnotationParser {
 				scanner.addExcludeFilter(typeFilter);
 			}
 		}
-
+		/**
+		 * 默认都不是懒加载
+		 */
 		boolean lazyInit = componentScan.getBoolean("lazyInit");
 		if (lazyInit) {
 			scanner.getBeanDefinitionDefaults().setLazyInit(true);
@@ -129,6 +137,7 @@ class ComponentScanAnnotationParser {
 				return declaringClass.equals(className);
 			}
 		});
+		//开始扫描
 		return scanner.doScan(StringUtils.toStringArray(basePackages));
 	}
 

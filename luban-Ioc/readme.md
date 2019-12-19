@@ -29,5 +29,15 @@ org.springframework.context.support.GenericApplicationContext#GenericApplication
             org.springframework.context.support.AbstractApplicationContext.prepareBeanFactory（beanFactory）
         //
         invokeBeanFactoryPostProcessors(beanFactory);
+
+
+
+
+注册一个beanDifinition的方法
+1 register(); 需要一个类
+2 scan(); 也需要一个类
+由于上面两个方法都是提供一个类，由类创建bd的过程是程序员无法参与的，内部做的
+3 @import(ImportBeanDefinitionRegistrar.class) 变成bd的过程是可以参与的
+    比如@mapperScan的原理 作用是扫描mapper         
             
             

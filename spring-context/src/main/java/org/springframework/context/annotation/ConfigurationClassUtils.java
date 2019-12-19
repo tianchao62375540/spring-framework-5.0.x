@@ -79,6 +79,7 @@ abstract class ConfigurationClassUtils {
 	 * @return whether the candidate qualifies as (any kind of) configuration class
 	 */
 	public static boolean checkConfigurationClassCandidate(BeanDefinition beanDef, MetadataReaderFactory metadataReaderFactory) {
+		//
 		String className = beanDef.getBeanClassName();
 		if (className == null || beanDef.getFactoryMethodName() != null) {
 			return false;
@@ -110,10 +111,17 @@ abstract class ConfigurationClassUtils {
 				return false;
 			}
 		}
-
+		//判断是不是加了@Configuraion注解
 		if (isFullConfigurationCandidate(metadata)) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
 		}
+		/**
+		 * 如果加了Configuration.class.getName() 这个方法就不执行了
+		 * 判断是否加了candidateIndicators.add(Component.class.getName());
+		 * 		candidateIndicators.add(ComponentScan.class.getName());
+		 * 		candidateIndicators.add(Import.class.getName());
+		 * 		candidateIndicators.add(ImportResource.class.getName());
+		 */
 		else if (isLiteConfigurationCandidate(metadata)) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
 		}

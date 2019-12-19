@@ -534,6 +534,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 				// Invoke factory processors registered as beans in the context.
 				//执行BeanFactoryPostProcessors
+				/**
+				 * 在spring环境中去执行已经被注册的factory processors
+				 * 设置执行自定义的BeanFactoryPostProcessor 和spring内部定义的
+				 * **目前有一个类ConfigurationClassPostProcessor的对象
+				 */
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
@@ -648,11 +653,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Configure the factory's standard context characteristics,
 	 * such as the context's ClassLoader and post-processors.
 	 * @param beanFactory the BeanFactory to configure
+	 *  此处的   beanFactory 参数等于 DefaultListableFactory
 	 */
 	protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
 		// Tell the internal bean factory to use the context's class loader etc.
 		beanFactory.setBeanClassLoader(getClassLoader());
-		//bean的表达式解析，后面说
+		//bean的表达式解析，后面说 能够获取bean当中的属性在前台页面
 		beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
 		//对象和string的转换 <property ref ='dao'> 把dao转换为对象
 		beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
@@ -660,9 +666,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		// Configure the bean factory with context callbacks.
 		//添加一个后置处理器
 		//ApplicationContextAwareProcessor
-		//能够在bean中获得各种*Aware(*Aware都有其作用)
+		//能够在bean中获得各种*Aware(*Aware都有其作用) **重要**
 		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
-		//添加了被自动注入忽略的列表ignoredDependencyInterfaces
+		//添加了被自动注入忽略的列表ignoredDependencyInterfaces （依赖替换）
 		beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
 		beanFactory.ignoreDependencyInterface(EmbeddedValueResolverAware.class);
 		beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);

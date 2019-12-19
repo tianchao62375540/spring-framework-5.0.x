@@ -56,6 +56,9 @@ final class PostProcessorRegistrationDelegate {
 
 		if (beanFactory instanceof BeanDefinitionRegistry) {
 			BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
+			/**
+			 * 以下两个集合放程序员add的（并不是标记了注解的）
+			 */
 			List<BeanFactoryPostProcessor> regularPostProcessors = new ArrayList<>();
 			List<BeanDefinitionRegistryPostProcessor> registryProcessors = new ArrayList<>();
 
@@ -75,6 +78,9 @@ final class PostProcessorRegistrationDelegate {
 			// uninitialized to let the bean factory post-processors apply to them!
 			// Separate between BeanDefinitionRegistryPostProcessors that implement
 			// PriorityOrdered, Ordered, and the rest.
+			/**
+			 * 存放的是spring自己定义的BeanDefinitionRegistryPostProcessor
+			 */
 			List<BeanDefinitionRegistryPostProcessor> currentRegistryProcessors = new ArrayList<>();
 
 			// First, invoke the BeanDefinitionRegistryPostProcessors that implement PriorityOrdered.
@@ -86,8 +92,11 @@ final class PostProcessorRegistrationDelegate {
 					processedBeans.add(ppName);
 				}
 			}
+			//排序
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
+			//和并list
 			registryProcessors.addAll(currentRegistryProcessors);
+			//**最重要。注意这里是方法调用
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			currentRegistryProcessors.clear();
 
@@ -123,6 +132,11 @@ final class PostProcessorRegistrationDelegate {
 			}
 
 			// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
+			/**
+			 * 执行BeanfactoryPostProcessor的回调，前面不是吗？
+			 * 前面执行的是BeanFactoryPostProcessor的子类BeanDefinitionRegistryPostProcessor的回调
+			 * 这里执行的是BeanfactoryPostProcessor的回调
+			 */
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
 			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
 		}

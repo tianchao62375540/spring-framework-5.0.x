@@ -271,7 +271,13 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 					logger.debug("Bean definition has already been processed as a configuration class: " + beanDef);
 				}
 			}
-			//判断是否是Configuration注解，这里其实主要看是否有 有点多啊
+			//判断是否是Configuration注解，这里其实主要看是否有 有点多啊  "FULL"
+			/**
+			 * "lite"     andidateIndicators.add(Component.class.getName());
+			 * 		candidateIndicators.add(ComponentScan.class.getName());
+			 * 		candidateIndicators.add(Import.class.getName());
+			 * 		candidateIndicators.add(ImportResource.class.getName());
+			 */
 			else if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
 				configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
 			}
@@ -291,9 +297,15 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 
 		// Detect any custom bean name generation strategy supplied through the enclosing application context
 		SingletonBeanRegistry sbr = null;
+		/**
+		 * 如果BeanDefinitionRegistry是SingletonBeanRegistry的子类
+		 * 由于我们当前传入的是DefaultListableBeanFactory，是SingletonBeanRegistry的子类
+		 * 因此可以强转
+		 */
 		if (registry instanceof SingletonBeanRegistry) {
 			sbr = (SingletonBeanRegistry) registry;
 			if (!this.localBeanNameGeneratorSet) {
+				//得到bean*Name*生成器
 				BeanNameGenerator generator = (BeanNameGenerator) sbr.getSingleton(CONFIGURATION_BEAN_NAME_GENERATOR);
 				if (generator != null) {
 					this.componentScanBeanNameGenerator = generator;
